@@ -1,0 +1,11 @@
+---
+
+swap_file_path: /swapfile.0
+swap_file_size_mb: 512
+
+sysctl_fs_file_max: 524288
+sysctl_vm_dirty_writeback_centisecs: 5000
+sysctl_net_core_somaxconn: 65535
+
+system_limit_nofile_hard: 524288
+system_limit_nofile_soft: 524288

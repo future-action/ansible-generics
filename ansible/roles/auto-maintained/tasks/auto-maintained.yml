@@ -1,0 +1,30 @@
+---
+
+- include: set-hostname.yml
+  tags:
+    - set-hostname
+
+- include: setup-repositories.yml
+  tags:
+    - setup-repositories
+
+- include: configure-locales.yml
+  tags:
+    - configure-locales
+
+- include: make-swap.yml
+  tags:
+    - make-swap
+
+- include: configure-timezone.yml
+  tags:
+    - configure-timezone
+
+- include: configure-kernel.yml
+  tags:
+    - configure-kernel
+
+# Or should I use dnsmasq? They say, DNS caching in nscd is broken.
+# - include: setup-nscd.yml
+#   tags:
+#     - setup-nscd

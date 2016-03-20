@@ -1,0 +1,48 @@
+---
+
+# - name: apt-get may need the latest keys
+#   apt_key: id={{ item }} state=present keyserver=subkeys.pgp.net
+#   with_items:
+#     - 9D6D8F6BC857C906
+#     - 7638D0442B90D010
+
+- name: Make sure all actual APT keys are present.
+  apt: >
+    pkg=debian-archive-keyring
+    state=latest
+    install_recommends=no
+    update_cache=yes cache_valid_time={{ apt_cache_valid_secs }}
+
+- name: apt_repository requires python_pycurl be installed.
+  apt: >
+    pkg=python-pycurl
+    state=present
+    install_recommends=no
+    update_cache=yes cache_valid_time={{ apt_cache_valid_secs }}
+
+- name: "Remove old repositories: 1/3."
+  file: path=/etc/apt/sources.list state=absent
+
+- name: "Remove old repositories: 2/3."
+  shell: >
+    chdir=/etc/apt/sources.list.d
+    find | egrep -v '^(\.|\./security_debian_org.list|\./ftp_us_debian_org_debian.list)$' | xargs rm --
+  register: bulk_remove_repositories_result
+  failed_when: "bulk_remove_repositories_result.stderr and
+                bulk_remove_repositories_result.stderr != 'rm: missing operand\nTry `rm --help\\' for more information.' and
+                bulk_remove_repositories_result.stderr != 'rm: missing operand\nTry \\'rm --help\\' for more information.'"
+  changed_when: not bulk_remove_repositories_result.stdout and not bulk_remove_repositories_result.stderr
+
+- name: "Remove old repositories: 3/3."
+  apt_repository: repo="{{ item }}" state=absent update_cache=yes
+  with_items: apt_repositories_absent
+
+- name: Setup APT repositories.
+  apt_repository: repo="{{ item }}" state=present update_cache=yes
+  with_items: apt_repositories
+
+- name: Setup APT settings.
+  template: >
+    src="etc/apt/preferences.d/repo-priorities.pref.j2"
+    dest="/etc/apt/preferences.d/repo-priorities.pref"
+    owner=root group=root mode=644

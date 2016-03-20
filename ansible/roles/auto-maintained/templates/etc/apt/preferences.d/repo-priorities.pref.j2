@@ -1,0 +1,38 @@
+#
+# Priority order is:
+# > [1001]   "never replaced by apt; may downgrade packages"
+# > [1000]   "never replaced by apt; may not downgrade packages"
+# > [990]    "can be replaced only by a version from APT::Default-Release"
+# > [500]    "can be replaced by any release only if version is higher"
+# > [100]    "currently installed; preferred only if no other is installed already"
+# > [ -1]    "never install"
+Package: *
+Pin: release v=*,a=stable,c=main,o=Debian
+Pin-Priority: 990
+
+Package: *
+Pin: release v=*,a=stable-backports,o=Debian
+Pin-Priority: 490
+
+Package: *
+Pin: release v=*,a=testing,o=Debian
+Pin-Priority: 480
+
+Package: *
+Pin: release v=*,a=unstable,o=Debian
+Pin-Priority: 450
+
+Package: *
+Pin: release v=*,a=experimental,o=Debian
+Pin-Priority: 400
+
+Package: *
+Pin: release a=trunk
+Pin-Priority: 400
+
+# Package: *
+# Pin: release o=Debian
+# Pin-Priority: -1
+Package: *
+Pin: release
+Pin-Priority: 300

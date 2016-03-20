@@ -1,0 +1,6 @@
+# To use this inventory, you must define the following variables
+# via `--extra-vars=...` command line option:
+#  - `lone_server` – the hostname/port of the server.
+
+[all:vars]
+django_settings_debug=yes

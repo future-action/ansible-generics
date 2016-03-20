@@ -1,0 +1,9 @@
+---
+
+- name: "Before anything else, make sure sudo is available (it may be absent on Debian 8.0)."
+  apt: pkg=sudo state=present install_recommends=no
+
+- include: auto-maintained.yml
+  become: yes
+  tags:
+    - auto-maintained

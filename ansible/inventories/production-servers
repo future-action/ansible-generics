@@ -1,0 +1,2 @@
+[all:vars]
+django_settings_debug=no

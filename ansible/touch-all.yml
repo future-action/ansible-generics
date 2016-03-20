@@ -1,0 +1,6 @@
+---
+
+- name: Touch all servers (gather facts and variables).
+  hosts: all
+  tags:
+    - all-servers

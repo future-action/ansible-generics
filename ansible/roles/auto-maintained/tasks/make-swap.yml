@@ -1,0 +1,42 @@
+---
+
+- name: "Create the empty swap file, 1/2: try fallocate."
+  command: >
+    creates={{ swap_file_path }}
+    fallocate --length {{ swap_file_size_mb }}M {{ swap_file_path }}
+  register: create_new_swap_file_fallocate_result
+  failed_when: False
+
+- name: "Create the empty swap file, 2/2: try dd if fallocate failed."
+  when: create_new_swap_file_fallocate_result|failed
+  command: >
+    dd if=/dev/zero of={{ swap_file_path }} bs=1048576 count={{ swap_file_size_mb }}
+  register: create_new_swap_file_dd_result
+
+- name: Set fact about whether the swap file was changed.
+  set_fact: >
+    new_swap_file_created_bool={{ create_new_swap_file_fallocate_result.changed or create_new_swap_file_dd_result.changed }}
+
+- name: "Set access rights."
+  when: new_swap_file_created_bool|bool
+  file: state=file path={{ swap_file_path }} mode=0600 owner=root group=root
+
+- name: "Turn the file to swap."
+  when: new_swap_file_created_bool|bool
+  command: mkswap {{ swap_file_path }}
+
+- name: "Add the file to /etc/fstab."
+  lineinfile: >
+    state=present
+    dest=/etc/fstab
+    line="{{ swap_file_path }} none swap sw 0 0"
+
+- name: "Test if the swap enabled already."
+  shell: swapon --summary | grep {{ swap_file_path }}
+  changed_when: False
+  failed_when: False
+  register: swap_enabled_result
+
+- name: "Enable the swap if disabled."
+  command: swapon {{ swap_file_path }}
+  when: swap_enabled_result.rc != 0

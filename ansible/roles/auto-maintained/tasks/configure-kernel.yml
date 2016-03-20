@@ -1,0 +1,30 @@
+---
+
+# Configure OS kernel
+
+- name: Configure OS kernel-specific settings.
+  sysctl: >
+    name={{ item.key }} value={{ item.value }}
+    state=present sysctl_file=/etc/sysctl.d/40-ansible-configure-kernel.conf
+    sysctl_set=yes
+  with_items:
+    - {key: 'fs.file-max', value: "{{ sysctl_fs_file_max }}" }
+    - {key: 'vm.dirty_writeback_centisecs', value: "{{ sysctl_vm_dirty_writeback_centisecs }}"}
+    - {key: 'net.core.somaxconn', value: "{{ sysctl_net_core_somaxconn }}"}
+
+- name: Make sure the limit-related settings file exists itself.
+  become: yes
+  file: >
+    state=touch
+    path=/etc/security/limits.d/all.conf
+    mode=0644 owner=root group=root
+  changed_when: False
+
+- name: Configure limits in settings.
+  lineinfile: >
+    dest=/etc/security/limits.d/all.conf
+    state=present
+    line='{{ item }}'
+  with_items:
+    - '* hard nofile {{ system_limit_nofile_hard }}'
+    - '* soft nofile {{ system_limit_nofile_soft }}'

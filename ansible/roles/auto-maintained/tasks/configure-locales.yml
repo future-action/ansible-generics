@@ -1,0 +1,29 @@
+---
+
+# https://wiki.debian.org/Locale
+
+- name: 'Funny, but `locales` package may be missing.'
+  apt: >
+    pkg={{ item }}
+    state=present default_release=stable
+    install_recommends=no
+    update_cache=yes cache_valid_time={{ apt_cache_valid_secs }}
+  with_items:
+    - locales
+    - libc-bin
+
+- name: Generate missing locale.
+  locale_gen: name=en_US.UTF-8 state=present
+
+# - name: "Update /etc/locale.gen"
+#   lineinfile: >
+#     dest=/etc/locale.gen
+#     state=present
+#     regexp="^#\s+(en_US\.UTF-8\w+UTF-8)"
+#     backrefs=yes line='\1'
+#   notify:
+#     - reconfigure locales on locale.gen change
+
+- name: "Set default locale"
+  command: update-locale LANGUAGE=en_US:en LANG=en_US.UTF-8
+  changed_when: False

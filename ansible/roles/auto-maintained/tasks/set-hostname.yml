@@ -1,0 +1,10 @@
+---
+
+- name: Add the planned hostname to /etc/hosts.
+  lineinfile: >
+    state=present
+    dest=/etc/hosts
+    line="127.0.0.1       {{ inventory_hostname.split('.')[0] }}"
+
+- name: Set hostname.
+  hostname: name={{ inventory_hostname.split('.')[0] }}

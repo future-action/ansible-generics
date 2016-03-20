@@ -1,0 +1,9 @@
+---
+
+# - name: reconfigure locales on locale.gen change
+#   become: yes
+#   command: locale-gen
+
+- name: reconfigure timezone
+  become: yes
+  command: dpkg-reconfigure -f noninteractive tzdata
