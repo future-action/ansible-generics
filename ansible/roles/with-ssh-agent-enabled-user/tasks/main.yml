@@ -1,0 +1,6 @@
+---
+
+- include: pass-ssh-agent-through-sudo.yml
+  become: yes
+  tags:
+    - pass-ssh-agent-through-sudo

@@ -1,0 +1,25 @@
+---
+
+- name: Configure sudo so it passes SSH agent information.
+  template: >
+    src="{{ item }}.j2" dest="/{{ item }}"
+    owner=root group=root mode=600
+  with_items:
+    - etc/sudoers.d/10-pass-ssh-auth-sock
+
+- name: Make sure the user itself exists.
+  user: name="{{ ssh_agent_enabled_user }}" state=present
+
+- name: acl package must be installed to proceed.
+  apt: >
+    pkg=acl
+    state=present
+    install_recommends=no
+    update_cache=yes cache_valid_time={{ apt_cache_valid_secs }}
+
+- name: In the current SSH session, allow the specified user access to the SSH agent information (if applicable).
+  become: no
+  shell: 'echo "SSH_AUTH_SOCK: <$SSH_AUTH_SOCK>"; /usr/bin/setfacl -m {{ ssh_agent_enabled_user }}:x $(dirname "$SSH_AUTH_SOCK"); /usr/bin/setfacl -m {{ ssh_agent_enabled_user }}:rwx "$SSH_AUTH_SOCK"'
+  failed_when: False
+  tags:
+    - source-updates-only
