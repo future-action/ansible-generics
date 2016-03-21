@@ -1,0 +1,6 @@
+---
+
+- include: docker-generic.yml
+  become: yes
+  tags:
+    - docker-generic
