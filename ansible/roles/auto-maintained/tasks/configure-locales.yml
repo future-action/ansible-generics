@@ -13,7 +13,10 @@
     - libc-bin
 
 - name: Generate missing locale.
-  locale_gen: name=en_US.UTF-8 state=present
+  locale_gen: name={{ item }} state=present
+  with_items:
+    - en_US.UTF-8
+    - ru_RU.UTF-8
 
 # - name: "Update /etc/locale.gen"
 #   lineinfile: >
