@@ -13,12 +13,16 @@
     install_recommends=no
     update_cache=yes cache_valid_time={{ apt_cache_valid_secs }}
 
-- name: apt_repository requires python_pycurl be installed.
+- name: apt_repository requires apt-related several packages to be installed.
   apt: >
-    pkg=python-pycurl
+    pkg={{item}}
     state=present
     install_recommends=no
     update_cache=yes cache_valid_time={{ apt_cache_valid_secs }}
+  with_items:
+      - python-apt
+      - apt-transport-https
+      - ca-certificates
 
 - name: "Remove old repositories: 1/3."
   file: path=/etc/apt/sources.list state=absent
@@ -34,12 +38,12 @@
   changed_when: not bulk_remove_repositories_result.stdout and not bulk_remove_repositories_result.stderr
 
 - name: "Remove old repositories: 3/3."
-  apt_repository: repo="{{ item }}" state=absent update_cache=yes
-  with_items: apt_repositories_absent
+  apt_repository: repo="{{ item }}" state=absent
+  with_items: "{{apt_repositories_absent}}"
 
 - name: Setup APT repositories.
-  apt_repository: repo="{{ item }}" state=present update_cache=yes
-  with_items: apt_repositories
+  apt_repository: repo="{{ item }}" state=present
+  with_items: "{{apt_repositories}}"
 
 - name: Setup APT settings.
   template: >
