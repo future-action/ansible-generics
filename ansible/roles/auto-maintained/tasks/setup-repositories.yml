@@ -24,20 +24,10 @@
       - apt-transport-https
       - ca-certificates
 
-- name: "Remove old repositories: 1/3."
+- name: "Remove old repositories: 1/2."
   file: path=/etc/apt/sources.list state=absent
 
-- name: "Remove old repositories: 2/3."
-  shell: >
-    chdir=/etc/apt/sources.list.d
-    find | egrep -v '^(\.|\./security_debian_org.list|\./ftp_us_debian_org_debian.list)$' | xargs rm --
-  register: bulk_remove_repositories_result
-  failed_when: "bulk_remove_repositories_result.stderr and
-                bulk_remove_repositories_result.stderr != 'rm: missing operand\nTry `rm --help\\' for more information.' and
-                bulk_remove_repositories_result.stderr != 'rm: missing operand\nTry \\'rm --help\\' for more information.'"
-  changed_when: not bulk_remove_repositories_result.stdout and not bulk_remove_repositories_result.stderr
-
-- name: "Remove old repositories: 3/3."
+- name: "Remove old repositories: 2/2."
   apt_repository: repo="{{ item }}" state=absent
   with_items: "{{apt_repositories_absent}}"
 
