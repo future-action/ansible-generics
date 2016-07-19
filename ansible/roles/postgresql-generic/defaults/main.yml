@@ -1,0 +1,4 @@
+---
+
+postgresql_version: 9.5
+postgresql_server_max_connections: 200

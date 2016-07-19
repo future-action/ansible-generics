@@ -1,0 +1,64 @@
+---
+# Any PostgreSQL replica set member
+
+- name: "Install needed APT packages: from stable."
+  apt: >
+    pkg={{ item }}
+    state=present default_release=stable
+    install_recommends=no
+    update_cache=yes cache_valid_time={{ apt_cache_valid_secs }}
+  with_items:
+    - python-psycopg2  # so that Ansible PG-related actions work
+
+- name: "Install needed APT packages: PostgreSQL server from stable."
+  apt: >
+    pkg={{ item }}
+    state=present default_release=stable
+    install_recommends=no
+    update_cache=yes cache_valid_time={{ apt_cache_valid_secs }}
+  with_items:
+    - postgresql-{{ postgresql_version }}
+    - postgresql-contrib-{{ postgresql_version }}
+
+- name: "Configure pg_hba (for maintenance user, replication, all private users and all private databases)."
+  become_user: postgres
+  template: >
+    src=etc/postgresql/postgresql_version/main/pg_hba.conf.j2
+    dest=/etc/postgresql/{{ postgresql_version }}/main/pg_hba.conf
+    owner=postgres group=postgres
+    mode=640
+  notify:
+    - restart postgresql
+
+- name: "Configure postgresql.conf for maximum performance."
+  lineinfile: >
+    state=present
+    dest=/etc/postgresql/{{ postgresql_version }}/main/postgresql.conf
+    regexp="^#?\s*{{ item.key }}\b"
+    line="{{ item.key }} = {{ item.value }}"
+  with_items:
+    - key: max_connections
+      value: "{{ postgresql_server_max_connections }}"
+    # * shared_buffers: If you have a dedicated database server with 1GB or more
+    # of RAM, a reasonable starting value for shared_buffers is 25% of
+    # the memory in your system.
+    - key: shared_buffers
+      value: "{{ ansible_memtotal_mb // 4 }}MB"
+    - key: effective_cache_size
+      value: "{{ ansible_memtotal_mb // 2 }}MB"
+    # * checkpoint_segments: each segment is 16 Mb
+    - key: checkpoint_segments
+      value: 32  # default: 3
+    # * work_mem: note that the system may take {{ work_mem * max_connections }}
+    # of real memory in worst case, so it better be lower.
+    - key: work_mem
+      value: "{{ ansible_memtotal_mb // postgresql_server_max_connections // 2 }}MB"
+    # * random_page_cost: for SSD, 1.1 is better
+    - key: random_page_cost
+      value: "1.1"
+    # * effective_io_concurrency: best guess for an SSD for now is 2
+    - key: effective_io_concurrency
+      value: "2"
+
+  notify:
+    - restart postgresql

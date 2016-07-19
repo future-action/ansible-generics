@@ -1,0 +1,6 @@
+---
+
+- include: postgresql-server-generic.yml
+  tags:
+    - postgresql-server-generic
+  become: yes
