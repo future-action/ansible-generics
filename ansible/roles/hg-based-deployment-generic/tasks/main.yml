@@ -1,0 +1,7 @@
+---
+# The project deployment via cloning the Mercurial repository..
+
+- include: hg-based-deployment.yml
+  become: yes
+  tags:
+    - hg-based-deployment-generic
