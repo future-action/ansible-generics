@@ -1,0 +1,6 @@
+---
+
+# May be overridden if needed (for example, for Vagrant)
+sendfile_support: true
+
+nginx_site_conf_template: "%s"

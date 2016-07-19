@@ -1,0 +1,6 @@
+---
+
+- include: nginx-server-generic.yml
+  tags:
+    - nginx-server-generic
+  become: yes

@@ -1,0 +1,74 @@
+---
+
+- name: Configure Nginx.
+  apt: >
+    pkg={{ item }}
+    state=present default_release=stable
+    update_cache=yes cache_valid_time={{ apt_cache_valid_secs }}
+  with_items:
+    - nginx-light
+    - openssl
+  notify:
+    - start nginx
+
+- name: Remove the default Nginx site.
+  file: state=absent path=/etc/nginx/sites-enabled/default
+  notify:
+    - restart nginx
+
+- name: Create log directories.
+  file: state=directory path=/var/log/nginx/{{ item }} owner=www-data group=adm
+  with_items: nginx_sites_enabled
+  notify:
+    - restart nginx
+
+- name: Configure Nginx (overall).
+  template: src={{ item }}.j2 dest=/{{ item }} owner=root group=root mode=644
+  with_items:
+    - etc/nginx/conf.d/resolver.conf
+    - etc/nginx/conf.d/sendfile.conf
+    - etc/nginx/conf.d/server_names_hash_bucket.conf
+  notify:
+    - restart nginx
+
+- name: "Disable forced 'sendfile on' in nginx.conf."
+  lineinfile: >
+    state=present dest=/etc/nginx/nginx.conf
+    regexp='^(\s*sendfile (?:on|off);)$' backrefs=yes
+    line='#\1'
+  notify:
+    - restart nginx
+
+# SSL security improvements taken from https://raymii.org/s/tutorials/Strong_SSL_Security_On_nginx.html
+
+- name: Increase DHE parameter for SSL.
+  command: >
+    creates=/etc/ssl/certs/dhparam.pem
+    openssl dhparam -out /etc/ssl/certs/dhparam.pem 4096
+
+- name: Configure Nginx (sites).
+  template: >
+    src={{ nginx_site_conf_template_dir }}/{{ nginx_site_conf_template|format(item) }}.j2
+    dest=/etc/nginx/sites-available/{{ nginx_site_conf_template|format(item) }}
+    owner=root group=root mode=644
+  with_items: nginx_sites_available
+  notify:
+    - restart nginx
+
+- name: Configure Nginx (enabled sites).
+  file: >
+    state=link
+    src=/etc/nginx/sites-available/{{ nginx_site_conf_template|format(item) }}
+    dest=/etc/nginx/sites-enabled/{{ nginx_site_conf_template|format(item) }}
+  with_items: nginx_sites_enabled
+  notify:
+    - restart nginx
+
+- name: Configure Nginx (disabled sites).
+  file: >
+    state=absent
+    path=/etc/nginx/sites-enabled/{{ nginx_site_conf_template|format(item) }}
+  when: "{{ (item not in nginx_sites_enabled)|bool }}"
+  with_items: nginx_sites_available
+  notify:
+    - restart nginx
