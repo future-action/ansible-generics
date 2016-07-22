@@ -1,6 +1,8 @@
 ---
 
-# May be overridden if needed (for example, for Vagrant)
+apt_nginx_release: stable
+
+# Overriding it is useful for Vagrant
 sendfile_support: true
 
 nginx_site_conf_template: "%s"

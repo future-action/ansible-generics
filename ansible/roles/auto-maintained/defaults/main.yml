@@ -5,11 +5,11 @@ apt_repositories:
   - deb http://ftp.us.debian.org/debian/ testing main contrib non-free
   - deb http://security.debian.org/ testing/updates main contrib non-free
   - deb http://ftp.us.debian.org/debian/ unstable main contrib non-free
-
-apt_repositories_absent:
   - deb http://ftp.us.debian.org/debian/ stable-backports main contrib non-free
   - deb http://ftp.us.debian.org/debian/ jessie-backports main contrib non-free
   - deb http://ftp.us.debian.org/debian/ wheezy-backports main contrib non-free
+
+apt_repositories_absent:
 
 default_apt_repository: stable
 apt_cache_valid_secs: 3600  # 1 hour

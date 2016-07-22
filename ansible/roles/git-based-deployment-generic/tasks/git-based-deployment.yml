@@ -1,30 +1,20 @@
 ---
 
-- name: "Install needed APT packages: from backports."
+- name: Install needed APT packages.
   apt: >
     pkg={{ item }}
-    state=latest default_release=stable
+    state=latest default_release={{ apt_git_release }}
     install_recommends=no
     update_cache=yes cache_valid_time={{ apt_cache_valid_secs }}
   with_items:
     - git
 
-- name: "Check if we need to handshake with Git server. TODO: change to ~/.ssh/known_hosts!"
-  shell: grep -c {{ git_repository_host }} /etc/ssh/ssh_known_hosts
-  ignore_errors: True
-  changed_when: False
-  register: need_ssh_keyscan
-
-- name: "Handshake with Git server. TODO: change to ~/.ssh/known_hosts!"
-  shell: ssh-keyscan {{ git_repository_host }} >> /etc/ssh/ssh_known_hosts
-  when: need_ssh_keyscan|failed or (need_ssh_keyscan.stdout | int) < 1
-
 - name: Clone repository.
   become_user: "{{ git_project_username }}"
-  git: >
-    repo={{ git_repository_url }}
-    dest={{ git_clone_path }}
-    purge=yes
+  git:
+    repo: "{{ git_repository_url }}"
+    dest: "{{ git_clone_path }}"
+    accept_hostkey: yes
   notify: "{{ git_update_handler }}"
   tags:
     - source-updates-only

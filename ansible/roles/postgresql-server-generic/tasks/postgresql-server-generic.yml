@@ -1,19 +1,19 @@
 ---
 # Any PostgreSQL replica set member
 
-- name: "Install needed APT packages: from stable."
+- name: "Install needed APT packages."
   apt: >
     pkg={{ item }}
-    state=latest default_release=stable
+    state=latest default_release={{ apt_postgresql_release }}
     install_recommends=no
     update_cache=yes cache_valid_time={{ apt_cache_valid_secs }}
   with_items:
     - python-psycopg2  # so that Ansible PG-related actions work
 
-- name: "Install needed APT packages: PostgreSQL server from stable."
+- name: "Install PostgreSQL server."
   apt: >
     pkg={{ item }}
-    state=latest default_release=stable
+    state=latest default_release={{ apt_postgresql_release }}
     install_recommends=no
     update_cache=yes cache_valid_time={{ apt_cache_valid_secs }}
   with_items:

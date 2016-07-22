@@ -1,6 +1,6 @@
 ---
 
-- name: Install Gunicorn.
+- name: Install Gunicorn server.
   apt: >
     pkg={{ item }}
     state=latest default_release={{ apt_gunicorn_release }}

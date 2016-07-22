@@ -1,9 +1,9 @@
 ---
 
-- name: Configure Nginx.
+- name: Install Nginx server.
   apt: >
     pkg={{ item }}
-    state=latest default_release=stable
+    state=latest default_release={{ apt_nginx_release }}
     update_cache=yes cache_valid_time={{ apt_cache_valid_secs }}
   with_items:
     - nginx-light

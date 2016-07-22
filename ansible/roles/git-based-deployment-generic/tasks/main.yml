@@ -1,5 +1,5 @@
 ---
-# The project deployment via cloning the Git repository..
+# The project deployment via cloning the Git repository.
 
 - include: git-based-deployment.yml
   become: yes
