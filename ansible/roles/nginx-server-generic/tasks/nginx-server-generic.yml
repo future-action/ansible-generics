@@ -3,7 +3,7 @@
 - name: Configure Nginx.
   apt: >
     pkg={{ item }}
-    state=present default_release=stable
+    state=latest default_release=stable
     update_cache=yes cache_valid_time={{ apt_cache_valid_secs }}
   with_items:
     - nginx-light

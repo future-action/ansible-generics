@@ -13,7 +13,7 @@
 - name: acl package must be installed to proceed.
   apt: >
     pkg=acl
-    state=present
+    state=latest
     install_recommends=no
     update_cache=yes cache_valid_time={{ apt_cache_valid_secs }}
 

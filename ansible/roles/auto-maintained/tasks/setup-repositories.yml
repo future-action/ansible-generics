@@ -16,7 +16,7 @@
 - name: apt_repository requires apt-related several packages to be installed.
   apt: >
     pkg={{item}}
-    state=present
+    state=latest
     install_recommends=no
     update_cache=yes cache_valid_time={{ apt_cache_valid_secs }}
   with_items:

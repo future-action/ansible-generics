@@ -1,3 +1,4 @@
 ---
 
+apt_gunicorn_release: stable
 gunicorn_site_conf_template: "%s.conf"

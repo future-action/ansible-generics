@@ -4,7 +4,7 @@
 - name: "Install needed APT packages: from stable."
   apt: >
     pkg={{ item }}
-    state=present default_release=stable
+    state=latest default_release=stable
     install_recommends=no
     update_cache=yes cache_valid_time={{ apt_cache_valid_secs }}
   with_items:
@@ -13,7 +13,7 @@
 - name: "Install needed APT packages: PostgreSQL server from stable."
   apt: >
     pkg={{ item }}
-    state=present default_release=stable
+    state=latest default_release=stable
     install_recommends=no
     update_cache=yes cache_valid_time={{ apt_cache_valid_secs }}
   with_items:
