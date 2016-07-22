@@ -1,4 +1,4 @@
-Requires the following variables preconfigured (in `group_vars/all` or alike):
+Allows the following variables to be reconfigured (in `group_vars/all` or alike):
 
 - `apt_repositories`
 - `apt_repositories_absent`
