@@ -1,0 +1,3 @@
+---
+
+gunicorn_site_conf_template: "%s.conf"

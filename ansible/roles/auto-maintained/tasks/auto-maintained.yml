@@ -24,6 +24,10 @@
   tags:
     - configure-kernel
 
+- include: configure-ntp.yml
+  tags:
+    - configure-ntp
+
 # Or should I use dnsmasq? They say, DNS caching in nscd is broken.
 # - include: setup-nscd.yml
 #   tags:

@@ -1,0 +1,6 @@
+---
+
+- include: gunicorn-server-generic.yml
+  become: yes
+  tags:
+    - gunicorn-server-generic

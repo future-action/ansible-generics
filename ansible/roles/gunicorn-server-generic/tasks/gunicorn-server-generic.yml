@@ -1,0 +1,29 @@
+---
+
+- name: Install Gunicorn.
+  apt: >
+    pkg={{ item }}
+    state=present default_release=stable
+    install_recommends=no
+    update_cache=yes cache_valid_time={{ apt_cache_valid_secs }}
+  with_items:
+    - gunicorn
+  notify:
+    - start gunicorn
+
+- name: "Configure Gunicorn: enabled sites."
+  template: >
+    src={{ gunicorn_site_conf_template_dir }}/{{ gunicorn_site_conf_template|format(item) }}.j2
+    dest=/etc/gunicorn.d/{{ gunicorn_site_conf_template|format(item) }}
+  with_items: gunicorn_sites_enabled
+  notify:
+    - restart gunicorn
+
+- name: "Configure Gunicorn: disabled sites."
+  file: >
+    state=absent
+    path="/etc/gunicorn.d/{{ gunicorn_site_conf_template|format(item) }}"
+  when: "{{ (item not in gunicorn_sites_enabled)|bool }}"
+  with_items: gunicorn_sites_available
+  notify:
+    - restart gunicorn
