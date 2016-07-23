@@ -29,11 +29,11 @@ host    replication     replicator      0.0.0.0/0               md5
 host    all             postgres        0.0.0.0/0               md5
 
 # Allow each PostgreSQL client to access each of the databases.
-{% set default_hostvars = {'private_do_network_ip': private_do_network_ip} %}
+{% set default_hostvars = {'private_network_ip': private_network_ip} %}
 {% for pg_client in groups['postgresql-clients'] %}
 
     {% set pg_client_hostvars = hostvars[pg_client] if pg_client in hostvars else default_hostvars %}
-    {% set pg_client_ip_address = pg_client_hostvars.private_do_network_ip %}
+    {% set pg_client_ip_address = pg_client_hostvars.private_network_ip %}
 
 {% for db_settings in postgresql_server_db_settings %}
 host    {{ db_settings.db.ljust(15) }} {{ db_settings.owner.ljust(15) }} {{ (pg_client_ip_address ~ '/32').ljust(23) }} md5

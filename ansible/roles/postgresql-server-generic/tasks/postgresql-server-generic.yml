@@ -34,7 +34,7 @@
   lineinfile: >
     state=present
     dest=/etc/postgresql/{{ postgresql_version }}/main/postgresql.conf
-    regexp="^#?\s*{{ item.key }}\b"
+    regexp="^\\s*{{ item.key }}\\b"
     line="{{ item.key }} = {{ item.value }}"
   with_items:
     - key: max_connections
@@ -46,9 +46,6 @@
       value: "{{ ansible_memtotal_mb // 4 }}MB"
     - key: effective_cache_size
       value: "{{ ansible_memtotal_mb // 2 }}MB"
-    # * checkpoint_segments: each segment is 16 Mb
-    - key: checkpoint_segments
-      value: 32  # default: 3
     # * work_mem: note that the system may take {{ work_mem * max_connections }}
     # of real memory in worst case, so it better be lower.
     - key: work_mem
