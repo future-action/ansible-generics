@@ -7,7 +7,7 @@
     install_recommends=no
     update_cache=yes cache_valid_time={{ apt_cache_valid_secs }}
   with_items:
-    - gunicorn
+    - gunicorn3
   notify:
     - start gunicorn
 
@@ -15,7 +15,7 @@
   template: >
     src={{ gunicorn_site_conf_template_dir }}/{{ gunicorn_site_conf_template|format(item) }}.j2
     dest=/etc/gunicorn.d/{{ gunicorn_site_conf_template|format(item) }}
-  with_items: gunicorn_sites_enabled
+  with_items: "{{ gunicorn_sites_enabled }}"
   notify:
     - restart gunicorn
 
@@ -24,6 +24,6 @@
     state=absent
     path="/etc/gunicorn.d/{{ gunicorn_site_conf_template|format(item) }}"
   when: "{{ (item not in gunicorn_sites_enabled)|bool }}"
-  with_items: gunicorn_sites_available
+  with_items: "{{ gunicorn_sites_available }}"
   notify:
     - restart gunicorn

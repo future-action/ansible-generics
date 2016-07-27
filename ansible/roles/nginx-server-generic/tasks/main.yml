@@ -1,6 +1,7 @@
 ---
 
-- include: nginx-server-generic.yml
+- name: "Nginx server generic for {{ nginx_sites_available }} available, {{ nginx_sites_enabled }} enabled."
+  include: nginx-server-generic.yml
   tags:
     - nginx-server-generic
   become: yes

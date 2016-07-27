@@ -6,7 +6,7 @@
     state=latest default_release={{ apt_nginx_release }}
     update_cache=yes cache_valid_time={{ apt_cache_valid_secs }}
   with_items:
-    - nginx-light
+    - nginx-full
     - openssl
   notify:
     - start nginx
@@ -18,7 +18,7 @@
 
 - name: Create log directories.
   file: state=directory path=/var/log/nginx/{{ item }} owner=www-data group=adm
-  with_items: nginx_sites_enabled
+  with_items: "{{ nginx_sites_enabled }}"
   notify:
     - restart nginx
 
@@ -41,7 +41,7 @@
 
 # SSL security improvements taken from https://raymii.org/s/tutorials/Strong_SSL_Security_On_nginx.html
 
-- name: Increase DHE parameter for SSL.
+- name: "Increase DHE parameter for SSL (make take quite a long time for the first run)."
   command: >
     creates=/etc/ssl/certs/dhparam.pem
     openssl dhparam -out /etc/ssl/certs/dhparam.pem 4096
@@ -51,7 +51,7 @@
     src={{ nginx_site_conf_template_dir }}/{{ nginx_site_conf_template|format(item) }}.j2
     dest=/etc/nginx/sites-available/{{ nginx_site_conf_template|format(item) }}
     owner=root group=root mode=644
-  with_items: nginx_sites_available
+  with_items: "{{ nginx_sites_available }}"
   notify:
     - restart nginx
 
@@ -60,7 +60,7 @@
     state=link
     src=/etc/nginx/sites-available/{{ nginx_site_conf_template|format(item) }}
     dest=/etc/nginx/sites-enabled/{{ nginx_site_conf_template|format(item) }}
-  with_items: nginx_sites_enabled
+  with_items: "{{ nginx_sites_enabled }}"
   notify:
     - restart nginx
 
@@ -69,6 +69,6 @@
     state=absent
     path=/etc/nginx/sites-enabled/{{ nginx_site_conf_template|format(item) }}
   when: "{{ (item not in nginx_sites_enabled)|bool }}"
-  with_items: nginx_sites_available
+  with_items: "{{ nginx_sites_available }},default"
   notify:
     - restart nginx

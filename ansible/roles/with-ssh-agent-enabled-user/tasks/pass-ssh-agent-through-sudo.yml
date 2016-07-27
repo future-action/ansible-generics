@@ -19,7 +19,7 @@
 
 - name: In the current SSH session, allow the specified user access to the SSH agent information (if applicable).
   become: no
-  shell: 'echo "SSH_AUTH_SOCK: <$SSH_AUTH_SOCK>"; /usr/bin/setfacl -m {{ ssh_agent_enabled_user }}:x $(dirname "$SSH_AUTH_SOCK"); /usr/bin/setfacl -m {{ ssh_agent_enabled_user }}:rwx "$SSH_AUTH_SOCK"'
+  shell: '/usr/bin/setfacl -m {{ ssh_agent_enabled_user }}:x $(dirname "$SSH_AUTH_SOCK"); /usr/bin/setfacl -m {{ ssh_agent_enabled_user }}:rwx "$SSH_AUTH_SOCK"'
   failed_when: False
   tags:
     - source-updates-only
