@@ -1,0 +1,16 @@
+---
+
+# This is a handler rather than a task inside the tasks,
+# so it will be executed AFTER the `restart_web_server_handler` is executed.
+# We need to prepare the directory for the Letsencrypt handshake;
+# then to call `restart_web_server_handler` so that our Web server is aware
+# about this directory; and only then we can safely request certificates.
+
+- name: certbot-request-certificates
+  become: yes
+  command: |
+    certbot certonly --noninteractive --agree-tos --email {{ letsencrypt_email }}
+    --webroot --webroot-path {{ letsencrypt_webroot }}
+    --domains {{ letsencrypt_domains|join(",") }}
+  args:
+    creates: "/etc/letsencrypt/live/{{ letsencrypt_domains.0 }}"

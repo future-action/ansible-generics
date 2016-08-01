@@ -1,0 +1,24 @@
+---
+
+- name: Install Certbot.
+  apt: >
+    pkg={{ item }}
+    state=latest default_release={{ apt_certbot_release }}
+    install_recommends=no
+    update_cache=yes cache_valid_time={{ apt_cache_valid_secs }}
+  with_items:
+    - certbot
+
+- name: Prepare directory to serve.
+  file:
+    state=directory
+    path="{{ letsencrypt_webroot }}/.well-known"
+    mode=0750 owner={{ webroot_user }} group={{ webroot_group }}
+  notify: "{{ restart_web_server_handler }}"
+
+# Perform request, if the certificate is missing.
+- name: Initial request.
+  stat: path="/etc/letsencrypt/live/{{ letsencrypt_domains.0 }}"
+  register: st
+  changed_when: not st.stat.exists
+  notify: certbot-request-certificates

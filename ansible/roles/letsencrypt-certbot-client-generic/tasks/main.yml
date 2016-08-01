@@ -1,0 +1,7 @@
+---
+
+- name: "Use Certbot to obtain Letsencrypt certificates for {{ letsencrypt_domains|join(',') }} hosted at {{letsencrypt_webroot}}."
+  include: letsencrypt-certbot-client-generic.yml
+  become: yes
+  tags:
+    - letsencrypt-certbot-client-generic
