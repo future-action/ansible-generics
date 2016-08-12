@@ -29,10 +29,12 @@
 
 - name: "Remove old repositories: 2/2."
   apt_repository: repo="{{ item }}" state=absent
+  when: apt_repositories_absent
   with_items: "{{apt_repositories_absent}}"
 
 - name: Setup APT repositories.
   apt_repository: repo="{{ item }}" state=present
+  when: apt_repositories
   with_items: "{{apt_repositories}}"
 
 - name: Setup APT settings.
