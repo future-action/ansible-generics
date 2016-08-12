@@ -1,4 +1,4 @@
 ---
 
-postgresql_version: 9.5
+postgresql_version: 9.4
 postgresql_server_max_connections: 50
