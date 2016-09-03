@@ -46,6 +46,16 @@
     creates=/etc/ssl/certs/dhparam.pem
     openssl dhparam -out /etc/ssl/certs/dhparam.pem 4096
 
+- name: "Check whether the SSL certificate exists already."
+  stat: path={{ nginx_ssl_certificate_path }}
+  register: nginx_ssl_certificate_path_stat_result
+
+- name: "Check whether the SSL certificate key exists already."
+  stat: path={{ nginx_ssl_certificate_key_path }}
+  register: nginx_ssl_certificate_key_path_stat_result
+
+- set_fact: nginx_ssl_is_enabled={{nginx_ssl_certificate_path_stat_result.stat.exists and nginx_ssl_certificate_key_path_stat_result.stat.exists }}
+
 - name: Configure Nginx (sites).
   template: >
     src={{ nginx_site_conf_template_dir }}/{{ nginx_site_conf_template|format(item) }}.j2
