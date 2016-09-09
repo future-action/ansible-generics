@@ -7,7 +7,7 @@ Requires the following variables preconfigured:
 
 - `letsencrypt_domains` – the list of the domains for which to request the SSL
     certificate. The first one must be the most-top-level, e.g.
-    `letsencrypt_domains: [myserver.com www.myserver.com]`
+    `letsencrypt_domains: [myserver.com, www.myserver.com]`
 - `letsencrypt_webroot` – the directory where the Certbot will store
     the Letsencrypt handshake files. In this directory, the `.well-known`
     will be created; your web server must be prepared to serve the files from

@@ -41,7 +41,7 @@
 
 # SSL security improvements taken from https://raymii.org/s/tutorials/Strong_SSL_Security_On_nginx.html
 
-- name: "Increase DHE parameter for SSL (make take quite a long time for the first run)."
+- name: "Increase DHE parameter for SSL (may take quite a long time for the first run)."
   command: >
     creates=/etc/ssl/certs/dhparam.pem
     openssl dhparam -out /etc/ssl/certs/dhparam.pem 4096
