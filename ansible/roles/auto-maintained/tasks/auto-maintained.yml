@@ -4,6 +4,10 @@
   tags:
     - set-hostname
 
+- include: create-project-user.yml
+  tags:
+    - create-project-user
+
 - include: setup-repositories.yml
   tags:
     - setup-repositories

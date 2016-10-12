@@ -1,0 +1,4 @@
+---
+
+- name: Create the project user.
+  user: name="{{ project_user }}" state=present
