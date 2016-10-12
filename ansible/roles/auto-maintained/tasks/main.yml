@@ -1,6 +1,8 @@
 ---
 
+# TODO: test, can we really use "become: yes" here?
 - name: "Before anything else, make sure sudo is available (it may be absent on Debian 8.0)."
+  become: yes
   apt: pkg=sudo state=present install_recommends=no
 
 - include: auto-maintained.yml
