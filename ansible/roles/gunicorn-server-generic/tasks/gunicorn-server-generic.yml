@@ -7,7 +7,8 @@
     install_recommends=no
     update_cache=yes cache_valid_time={{ apt_cache_valid_secs }}
   with_items:
-    - gunicorn3
+    - python-setuptools
+    - gunicorn
   notify:
     - start gunicorn
 
