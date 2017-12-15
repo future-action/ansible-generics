@@ -1,3 +1,4 @@
 ---
 
 apt_git_release: stable
+git_version: master

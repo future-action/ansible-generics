@@ -14,6 +14,7 @@
   git:
     repo: "{{ git_repository_url }}"
     dest: "{{ git_clone_path }}"
+    version: "{{ git_version }}"
     accept_hostkey: yes
     force: yes
   notify: "{{ git_update_handler }}"
